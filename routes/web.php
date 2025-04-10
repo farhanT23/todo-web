@@ -12,6 +12,7 @@ Route::get('/', [LandingController::class, 'showGreeting'])->name('landing');;
 
 Route::prefix("auth")->group(function () {
     Route::get('registration', [\App\Http\Controllers\AuthController::class, 'registration'])->name('registration');
+    Route::get('login', [\App\Http\Controllers\AuthController::class, 'login'])->name('login');
 });
 
 Route::prefix("dashboard")->group(function () {
