@@ -9,4 +9,4 @@ Route::get('/', function () {
 
 Route::prefix("auth")->group(function () {
     Route::get('registration', [\App\Http\Controllers\AuthController::class, 'registration'])->name('registration');
-})->name('auth.');
+});
