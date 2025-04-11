@@ -133,7 +133,7 @@
                                         class="px-1 py-1 text-red-500 rounded cursor-pointer">
                                     <x-heroicon-o-trash class="w-5 h-5" />
                                 </button>
-                                <button class="px-1 py-1 bg-green-500 text-white rounded cursor-pointer">
+                                <button onclick="makeComplete(${task.id})" class="px-1 py-1 bg-green-500 text-white rounded cursor-pointer">
                                     <x-heroicon-o-check class="w-5 h-5" />
                                 </button>
                             </div>
@@ -142,21 +142,21 @@
                             <h1 class="font-bold">${task.title}</h1>
                         </div>
                         <div>${task.description}</div>
-                        ${task.due_date ? `
-                                                                                                                                                                                                                                                                                                <div id="due-date" class="flex items-center mt-auto">
-                                                                                                                                                                                                                                                                                                    <span class="text-gray-500 border border-gray-400 px-2 py-1 rounded-full shadow-2xl">
-                                                                                                                                                                                                                                                                                                        ${new Date(task.due_date).toLocaleDateString('en-GB')}
-                                                                                                                                                                                                                                                                                                    </span>
+                        
+                        <div id="due-date" class="flex items-center mt-auto">
+                            ${task.due_date ? `
+                            <span class="text-gray-500 border border-gray-400 px-2 py-1 rounded-full shadow-2xl">
+                                ${new Date(task.due_date).toLocaleDateString('en-GB')}
+                            </span>` : ''}
 
-                                                                                                                                                                                                                                            <span class="text-gray-500 border 
-                                                                                                                                                                                                                                            
-                                                                                                                                                                                                                                            ${task.priority == 'low' ? 'bg-green-200 border-green-500' : task.priority == 'medium' ? 'bg-yellow-200 border-yellow-500' : 'bg-red-200 border-red-500'}
+    <span class="text-gray-500 border 
 
-                                                                                                                                                                                                                                            px-2 py-1 rounded-full shadow-2xl uppercase">
-                                                                                                                                                                                                                                                ${task.priority}
-                                                                                                                                                                                                                                            </span>
-                                                                                                                                                                                                                                                                                                </div>` : ''
-                        }
+    ${task.priority == 'low' ? 'bg-green-200 border-green-500' : task.priority == 'medium' ? 'bg-yellow-200 border-yellow-500' : 'bg-red-200 border-red-500'}
+
+    px-2 py-1 rounded-full shadow-2xl uppercase">
+    ${task.priority}
+    </span>
+                    </div>
                         
                     </div>
                 `;
@@ -238,40 +238,40 @@
         }
 
         function saveForm(event) {
-            event.preventDefault(); // Prevent the default form submission
+            event.preventDefault(); // Prevent default form submission
 
-            const form = event.target; // The form element
-            const formData = new FormData(form); // Create FormData from the form
-            const url = form.action; // Get the form action URL
+            const form = event.target;
+            const formData = new FormData(form);
+            const url = form.action;
 
-
-
-
-            const formObject = Object.fromEntries(formData);
-
-
-            console.log(url, formData);
+            // Optional: check what's inside
+            console.log('FormData entries:');
+            for (const pair of formData.entries()) {
+                console.log(`${pair[0]}: ${pair[1]}`);
+            }
 
 
 
             fetch(url, {
                     method: 'POST',
-                    body: formData
+                    body: formData,
+
                 })
                 .then(response => response.json())
                 .then(data => {
                     if (data.status) {
-                        // Close the modal
                         closeModal();
-
                         loadTasks();
                     } else {
                         alert('Error: ' + data.message);
                     }
                 })
-                .catch(error => alert('Error hh: ' + error));
-
+                .catch(error => {
+                    console.error(error);
+                    alert('Something went wrong');
+                });
         }
+
 
         function deleteTask(id) {
             if (confirm('Are you sure you want to delete this task?')) {
@@ -299,13 +299,18 @@
                         document.getElementById('title').value = task.title;
                         document.getElementById('description').value = task.description;
                         // Format the date to YYYY-MM-DD
-                        const dueDate = new Date(task.due_date);
-                        const formattedDate = dueDate.toISOString().split('T')[0];
-                        document.getElementById('due_date').value = formattedDate;
+                        if (task.due_date) {
+                            const dueDate = new Date(task.due_date);
+                            const formattedDate = dueDate.toISOString().split('T')[0];
+                            document.getElementById('due_date').value = formattedDate;
+                        } else {
+                            document.getElementById('due_date').value = '';
+                        }
 
+                        const domain = window.location.origin;
 
                         document.getElementById('priority').value = task.priority;
-                        document.getElementById('task-form').action = `/tasks/update/${task.id}`;
+                        document.getElementById('task-form').action = `${domain}/tasks/update/${task.id}`;
                         document.getElementById('task-form').method = 'POST';
                         document.querySelector('.modaltitle').innerText = 'Edit Task';
                         openModal();
@@ -317,11 +322,34 @@
         }
 
         function makeStar(id) {
-            fetch(`/tasks/make-star/${id}`)
+
+            const domain = window.location.origin;
+            const url = `${domain}/tasks/${id}/toggle-starred`;
+
+            fetch(url)
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 200) {
                         alert('Task starred successfully');
+                        loadTasks();
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => alert('Error: ' + error));
+
+        }
+
+        function makeComplete(id) {
+
+            const domain = window.location.origin;
+            const url = `${domain}/tasks/${id}/toggle-completed`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 200) {
+                        alert('Task Completed successfully');
                         loadTasks();
                     } else {
                         alert('Error: ' + data.message);

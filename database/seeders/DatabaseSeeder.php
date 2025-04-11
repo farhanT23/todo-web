@@ -13,14 +13,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        User::factory(10)->create();
 
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'amsiam990@gmail.com',
-        // ]);
+        User::factory()->create([
+            'name' => 'Test User',
+            'email' => 'amsiam990@gmail.com',
+            'is_active'=> true,
+            'is_verified'=> true,
+        ]);
 
-        Task::factory(1000)->create([
+        Task::factory(100)->create([
             "user_id"=>11,
         ]);
     }

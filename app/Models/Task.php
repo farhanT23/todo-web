@@ -24,7 +24,7 @@ class Task extends Model
         'due_date' => 'date',
         'is_completed' => 'boolean',
         'is_starred' => 'boolean',
-        'priority' => TaskPriority::class,
+        // 'priority' => TaskPriority::class,
     ];
 
     public function user()

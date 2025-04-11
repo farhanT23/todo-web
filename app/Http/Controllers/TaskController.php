@@ -20,6 +20,8 @@ class TaskController extends Controller
         })
         ->when($request->completed, function ($query) {
             $query->where('is_completed', 1);
+        })->when(!$request->completed, function ($query) {
+            $query->where('is_completed', 0);
         })
         ->when($request->starred, function ($query) {
             $query->where('is_starred', 1);
@@ -47,6 +49,7 @@ class TaskController extends Controller
     public function create(CreateTaskRequest $request)
     {
         $validated = $request->validated();
+
 
         $task = Task::create([
             'user_id' => auth()->id(),
@@ -104,4 +107,27 @@ class TaskController extends Controller
             'status' => 200
         ]);
     }
+    public function toggleCompleted($id)
+     {
+         $task = Task::where('user_id', auth()->id())->findOrFail($id);
+         $task->is_completed = !$task->is_completed;
+         $task->save();
+ 
+         return response()->json([
+             'message' => 'Task completion status updated',
+             'status' => 200
+         ]);
+     }
+ 
+     public function toggleStarred($id)
+     {
+         $task = Task::where('user_id', auth()->id())->findOrFail($id);
+         $task->is_starred = !$task->is_starred;
+         $task->save();
+ 
+         return response()->json([
+             'message' => 'Task star status updated',
+             'status' => 200
+         ]);
+     }
 }
