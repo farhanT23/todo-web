@@ -38,8 +38,8 @@
                 <div>
                     <div class="flex flex-row items-center gap-2">
                         <form>
-                            <input name="search" type="text" class="border border-gray-400 rounded px-2 py-1"
-                                placeholder="Search...">
+                            <input name="search" type="text" value="{{ request()->search }}"
+                                class="border border-gray-400 rounded px-2 py-1" placeholder="Search...">
                             <button class="px-2 py-1 rounded bg-blue-600 text-white">Search</button>
                         </form>
                     </div>

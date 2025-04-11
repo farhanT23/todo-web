@@ -26,8 +26,24 @@ Route::prefix("auth")->group(function () {
     Route::get('forget-password', [\App\Http\Controllers\AuthController::class, 'forgetPassword'])->name('forget-password');
 });
 
-Route::prefix("dashboard")->group(function () {
-    Route::get('/', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
+
+
+
+Route::group(['middleware' => ['auth']], function () {
+    Route::get('logout', [\App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
+
+
+    Route::prefix("dashboard")->group(function () {
+        Route::get('/', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
+    });
+
+    Route::prefix("tasks")->group(function () {
+        Route::get('/', [\App\Http\Controllers\TaskController::class, 'index'])->name('tasks');
+        Route::get('/create', [\App\Http\Controllers\TaskController::class, 'create'])->name('task-create');
+        Route::post('/store', [\App\Http\Controllers\TaskController::class, 'store'])->name('task-store');
+        Route::get('/edit/{id}', [\App\Http\Controllers\TaskController::class, 'edit'])->name('task-edit');
+        Route::post('/update/{id}', [\App\Http\Controllers\TaskController::class, 'update'])->name('task-update');
+        Route::get('/delete/{id}', [\App\Http\Controllers\TaskController::class, 'delete'])->name('task-delete');
+    });
 
 });
-
