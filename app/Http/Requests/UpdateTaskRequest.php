@@ -17,9 +17,7 @@ class UpdateTaskRequest extends FormRequest
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'due_date' => 'nullable|date',
-            'priority' => 'required|in:low,medium,high',
-            'is_completed' => 'required|boolean',
-            'is_starred' => 'required|boolean',
+            'priority' => 'required|in:low,medium,high'
         ];
     }
 

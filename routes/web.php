@@ -51,8 +51,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/edit/{id}', [TaskController::class, 'edit'])->name('task-edit');
         Route::post('/update/{id}', [TaskController::class, 'update'])->name('task-update');
         Route::get('/delete/{id}', [TaskController::class, 'delete'])->name('task-delete');
-        Route::post('/tasks/{id}/toggle-completed', [TaskController::class, 'toggleCompleted'])->name('task-toggle-completed');
-        Route::post('/tasks/{id}/toggle-starred', [TaskController::class, 'toggleStarred'])->name('task-toggle-starred');
+        Route::get('/{id}/toggle-completed', [TaskController::class, 'toggleCompleted'])->name('task-toggle-completed');
+        Route::get('/{id}/toggle-starred', [TaskController::class, 'toggleStarred'])->name('task-toggle-starred');
     });
 
 });

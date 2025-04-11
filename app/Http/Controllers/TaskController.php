@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\Task;
+use App\Http\Requests\CreateTaskRequest;
+use App\Http\Requests\UpdateTaskRequest;
 
 class TaskController extends Controller
 {
@@ -12,26 +14,29 @@ class TaskController extends Controller
     {
 
         $tasks = Task::where('user_id', auth()->id())
-            ->when($request->search, function ($query) use ($request) {
-                $query->where('title', 'like', '%' . $request->search . '%')
-                    ->orWhere('description', 'like', '%' . $request->search . '%');
-            })
-            ->when($request->completed, function ($query) {
-                $query->where('is_completed', 1);
-            })
-            ->when($request->starred, function ($query) {
-                $query->where('is_starred', 1);
-            })
-            ->when($request->priority, function ($query) use ($request) {
-                $query->where('priority', $request->priority);
-            })
-            ->when($request->from_date, function ($query) use ($request) {
-                $query->where('due_date', ">=", $request->from_date);
-            })
-            ->when($request->to_date, function ($query) use ($request) {
-                $query->where('due_date', "<=", $request->to_date);
-            })
-            ->paginate(6);
+        ->when($request->search, function ($query) use ($request) {
+            $query->where('title', 'like', '%' . $request->search . '%')
+                ->orWhere('description', 'like', '%' . $request->search . '%');
+        })
+        ->when($request->completed, function ($query) {
+            $query->where('is_completed', 1);
+        })->when(!$request->completed, function ($query) {
+            $query->where('is_completed', 0);
+        })
+        ->when($request->starred, function ($query) {
+            $query->where('is_starred', 1);
+        })
+        ->when($request->priority, function ($query) use ($request) {
+            $query->where('priority', $request->priority);
+        })
+        ->when($request->from_date, function ($query) use ($request) {
+            $query->where('due_date',">=" ,$request->from_date);
+        })
+        ->when($request->to_date, function ($query) use ($request) {
+            $query->where('due_date',"<=" ,$request->to_date);
+        })
+        ->latest()
+        ->paginate(6);
 
         //send as json
         return response()->json([
@@ -44,6 +49,7 @@ class TaskController extends Controller
     public function create(CreateTaskRequest $request)
     {
         $validated = $request->validated();
+
 
         $task = Task::create([
             'user_id' => auth()->id(),
@@ -101,30 +107,27 @@ class TaskController extends Controller
             'status' => 200
         ]);
     }
-
     public function toggleCompleted($id)
-    {
-        $task = Task::where('user_id', auth()->id())->findOrFail($id);
-        $task->is_completed = !$task->is_completed;
-        $task->save();
-
-        return response()->json([
-            'message' => 'Task completion status updated',
-            'status' => 200
-        ]);
-    }
-
-    public function toggleStarred($id)
-    {
-        $task = Task::where('user_id', auth()->id())->findOrFail($id);
-        $task->is_starred = !$task->is_starred;
-        $task->save();
-
-        return response()->json([
-            'message' => 'Task star status updated',
-            'status' => 200
-        ]);
-    }
-
-
+     {
+         $task = Task::where('user_id', auth()->id())->findOrFail($id);
+         $task->is_completed = !$task->is_completed;
+         $task->save();
+ 
+         return response()->json([
+             'message' => 'Task completion status updated',
+             'status' => 200
+         ]);
+     }
+ 
+     public function toggleStarred($id)
+     {
+         $task = Task::where('user_id', auth()->id())->findOrFail($id);
+         $task->is_starred = !$task->is_starred;
+         $task->save();
+ 
+         return response()->json([
+             'message' => 'Task star status updated',
+             'status' => 200
+         ]);
+     }
 }
