@@ -5,7 +5,8 @@
 
         <h1 class="text-2xl font-bold text-center mb-5">Login</h1>
 
-        <form class="w-full">
+        <form class="w-full" method="POST" action="{{ route('login') }}">
+            @csrf
 
             <x-input name="email" label="Your email" type="email" />
             <x-input name="password" label="Your password" type="password" />
@@ -15,5 +16,10 @@
                 Login
             </x-button>
         </form>
+
     </div>
+
+
+
+
 @endsection
