@@ -3,3 +3,5 @@ function toggleSidebar() {
     
     sidebar.classList.toggle('hidden');
 }
+
+
