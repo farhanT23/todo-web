@@ -5,7 +5,8 @@
 
         <h1 class="text-2xl font-bold text-center mb-5">Email To Send Reset Link</h1>
 
-        <form class="w-full">
+        <form class="w-full" method="POST" action="{{ route('forget-password') }}">
+            @csrf
 
             <x-input name="email" label="Your email" type="email" />
 
