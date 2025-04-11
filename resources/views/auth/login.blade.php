@@ -10,7 +10,7 @@
             <x-input name="email" label="Your email" type="email" />
             <x-input name="password" label="Your password" type="password" />
 
-            <a href="{{route('forgetPassword')}}" class="text-gray-700">Forgot Your Passowrd?</a>
+            <a href="{{route('forget-password')}}" class="text-gray-700">Forgot Your Passowrd?</a>
             <x-button type="submit" class="w-full mt-5">
                 Login
             </x-button>
