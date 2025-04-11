@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LandingController;
+use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
 
 //Route::get('/', function () {
@@ -45,12 +46,11 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     Route::prefix("tasks")->group(function () {
-        Route::get('/', [\App\Http\Controllers\TaskController::class, 'index'])->name('tasks');
-        Route::get('/create', [\App\Http\Controllers\TaskController::class, 'create'])->name('task-create');
-        Route::post('/store', [\App\Http\Controllers\TaskController::class, 'store'])->name('task-store');
-        Route::get('/edit/{id}', [\App\Http\Controllers\TaskController::class, 'edit'])->name('task-edit');
-        Route::post('/update/{id}', [\App\Http\Controllers\TaskController::class, 'update'])->name('task-update');
-        Route::get('/delete/{id}', [\App\Http\Controllers\TaskController::class, 'delete'])->name('task-delete');
+        Route::get('/', [TaskController::class, 'index'])->name('tasks');
+        Route::post('/create', [TaskController::class, 'create'])->name('task-create');
+        Route::get('/edit/{id}', [TaskController::class, 'edit'])->name('task-edit');
+        Route::post('/update/{id}', [TaskController::class, 'update'])->name('task-update');
+        Route::get('/delete/{id}', [TaskController::class, 'delete'])->name('task-delete');
     });
 
 });

@@ -40,4 +40,65 @@ class TaskController extends Controller
             'status' => 200
         ]);
     }
+
+    public function create(CreateTaskRequest $request)
+    {
+        $validated = $request->validated();
+
+        $task = Task::create([
+            'user_id' => auth()->id(),
+            'title' => $validated['title'],
+            'description' => $validated['description'] ?? null,
+            'due_date' => $validated['due_date'] ?? null,
+            'priority' => $validated['priority'],
+            'is_completed' => false,
+            'is_starred' => false,
+        ]);
+
+        return response()->json([
+            'message' => 'Task created successfully',
+            'data' => $task,
+            'status' => 201
+        ]);
+    }
+
+    // Get the task to edit
+    public function edit($id)
+    {
+        $task = Task::where('user_id', auth()->id())->findOrFail($id);
+
+        return response()->json([
+            'message' => 'Task retrieved for editing',
+            'data' => $task,
+            'status' => 200
+        ]);
+    }
+
+    // Update the existing task
+    public function update(UpdateTaskRequest $request, $id)
+    {
+        $task = Task::where('user_id', auth()->id())->findOrFail($id);
+
+        $validated = $request->validated();
+
+        $task->update($validated);
+
+        return response()->json([
+            'message' => 'Task updated successfully',
+            'data' => $task,
+            'status' => 200
+        ]);
+    }
+
+    // Delete the task
+    public function delete($id)
+    {
+        $task = Task::where('user_id', auth()->id())->findOrFail($id);
+        $task->delete();
+
+        return response()->json([
+            'message' => 'Task deleted successfully',
+            'status' => 200
+        ]);
+    }
 }
