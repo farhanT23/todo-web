@@ -6,6 +6,27 @@
         <button class="px-5 py-1 rounded bg-blue-600 text-white">Add Task</button>
     </div>
 
+    <div class="px-10">
+        <form class="flex flex-row gap-2 mb-5">
+            <input name="from_date" type="date" value="{{ request()->from_date }}"
+                class="border border-gray-400 rounded px-2 py-1">
+            <input name="to_date" type="date" value="{{ request()->to_date }}"
+                class="border border-gray-400 rounded px-2 py-1">
+
+            <select name="priority" class="border border-gray-400 rounded px-2 py-1">
+                <option value="">Select Priority</option>
+
+                @foreach (['low', 'medium', 'high'] as $priority)
+                    <option value="{{ $priority }}" @if (request()->priority == $priority) selected @endif>
+                        {{ ucfirst($priority) }}</option>
+                @endforeach
+
+            </select>
+            <button class="px-2 py-1 rounded bg-blue-600 text-white">Search</button>
+
+        </form>
+    </div>
+
     <div id="task-grid"
         class="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 h-[calc(100vh-10rem)] overflow-y-auto relative px-10">
 
@@ -40,8 +61,13 @@
             const search = urlParams.get('search') || '';
             const starred = urlParams.get('starred') || '';
             const completed = urlParams.get('completed') || '';
+            const fromDate = urlParams.get('from_date') || '';
+            const toDate = urlParams.get('to_date') || '';
+            const priority = urlParams.get('priority') || '';
 
-            fetch(`/tasks?page=${page}&search=${search}&starred=${starred}&completed=${completed}`)
+            fetch(
+                    `/tasks?page=${page}&search=${search}&starred=${starred}&completed=${completed}&from_date=${fromDate}&to_date=${toDate}&priority=${priority}`
+                )
                 .then(response => response.json())
                 .then(res => {
                     const taskContainer = document.querySelector('#task-grid');
@@ -74,12 +100,21 @@
                         </div>
                         <div>${task.description}</div>
                         ${task.due_date ? `
-                                            <div id="due-date" class="flex items-center mt-auto">
-                                                <span class="text-gray-500 border border-gray-400 px-2 py-1 rounded-full shadow-2xl">
-                                                    ${new Date(task.due_date).toLocaleDateString('en-GB')}
-                                                </span>
-                                            </div>` : ''
+                                                                                            <div id="due-date" class="flex items-center mt-auto">
+                                                                                                <span class="text-gray-500 border border-gray-400 px-2 py-1 rounded-full shadow-2xl">
+                                                                                                    ${new Date(task.due_date).toLocaleDateString('en-GB')}
+                                                                                                </span>
+
+                                        <span class="text-gray-500 border 
+                                        
+                                        ${task.priority == 'low' ? 'bg-green-200 border-green-500' : task.priority == 'medium' ? 'bg-yellow-200 border-yellow-500' : 'bg-red-200 border-red-500'}
+
+                                        px-2 py-1 rounded-full shadow-2xl uppercase">
+                                            ${task.priority}
+                                        </span>
+                                                                                            </div>` : ''
                         }
+                        
                     </div>
                 `;
                         const sentinel = document.querySelector('#scroll-sentinel');

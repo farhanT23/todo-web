@@ -22,6 +22,15 @@ class TaskController extends Controller
         ->when($request->starred, function ($query) {
             $query->where('is_starred', 1);
         })
+        ->when($request->priority, function ($query) use ($request) {
+            $query->where('priority', $request->priority);
+        })
+        ->when($request->from_date, function ($query) use ($request) {
+            $query->where('due_date',">=" ,$request->from_date);
+        })
+        ->when($request->to_date, function ($query) use ($request) {
+            $query->where('due_date',"<=" ,$request->to_date);
+        })
         ->paginate(6);
 
         //send as json
